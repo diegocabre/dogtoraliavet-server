@@ -11,6 +11,8 @@ export const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
+
+
 pool.on("connect", () => {
   console.log("Database connected");
 });

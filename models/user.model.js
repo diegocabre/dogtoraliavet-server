@@ -11,6 +11,17 @@ const findOne = async (email) => {
   }
 };
 
+const findByRut = async (rut) => {
+  try {
+    const query = "SELECT * FROM usuarios WHERE rut = $1";
+    const { rows } = await pool.query(query, [rut]);
+    return rows[0];
+  } catch (error) {
+    console.error("Error fetching user by RUT:", error);
+    throw error;
+  }
+};
+
 const create = async (email, password, nombre, apellidos, rut) => {
   try {
     const query =
@@ -29,4 +40,15 @@ const create = async (email, password, nombre, apellidos, rut) => {
   }
 };
 
-export const userModel = { findOne, create };
+const deleteUser = async (email) => {
+  try {
+    const query = "DELETE FROM usuarios WHERE email = $1";
+    const result = await pool.query(query, [email]);
+    return result;
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    throw error;
+  }
+};
+
+export const userModel = { findOne, findByRut, create, deleteUser };

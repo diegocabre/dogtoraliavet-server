@@ -2,6 +2,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 import authRoutes from "./routes/auth.js";
 import {
   crearUsuario,
@@ -22,24 +24,91 @@ import {
   obtenerContactoPorId,
 } from "./db/consultas.js";
 
-const saltRounds = 10; // Número de rondas de sal
+dotenv.config();
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+const saltRounds = 10;
+const secret = process.env.JWT_SECRET;
 
 app.use(bodyParser.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Reemplaza con el origen de tu frontend
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 // Rutas de autenticación
 app.use("/api/auth", authRoutes);
+
+// Middleware para verificar el token JWT y obtener el usuario
+const verificarToken = (req, res, next) => {
+  const token = req.headers["authorization"];
+  if (!token) return res.status(403).json({ error: "Token no proporcionado" });
+
+  jwt.verify(token, secret, (err, decoded) => {
+    if (err) return res.status(500).json({ error: "Token no válido" });
+
+    req.userId = decoded.id;
+    next();
+  });
+};
+
+// Funciones de validación
+const validateEmail = (email) => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(String(email).toLowerCase());
+};
+
+const validateRut = (rut) => {
+  const re = /^\d{1,2}\.\d{3}\.\d{3}-[\dKk]$/;
+  return re.test(rut);
+};
+
+// Ruta para obtener los datos del usuario autenticado
+app.get("/api/usuarios/me", verificarToken, async (req, res) => {
+  try {
+    const usuario = await obtenerUsuarioPorId(req.userId);
+    if (!usuario)
+      return res.status(404).json({ error: "Usuario no encontrado" });
+
+    res.status(200).json(usuario);
+  } catch (error) {
+    console.error("Error al obtener los datos del usuario:", error);
+    res.status(500).json({ error: "Error al obtener los datos del usuario" });
+  }
+});
 
 // Rutas de API para usuarios
 app.post("/api/usuarios", async (req, res) => {
   try {
     const { email, password, nombre, apellidos, rut } = req.body;
 
-    // Encriptar contraseña antes de guardarla
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    // Validaciones
+    if (!email || !password || !nombre || !apellidos || !rut) {
+      return res
+        .status(400)
+        .json({ error: "Todos los campos son obligatorios." });
+    }
+    if (!validateEmail(email)) {
+      return res
+        .status(400)
+        .json({ error: "El email no tiene un formato válido." });
+    }
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ error: "La contraseña debe tener al menos 6 caracteres." });
+    }
+    if (!validateRut(rut)) {
+      return res
+        .status(400)
+        .json({ error: "El RUT no tiene un formato válido." });
+    }
 
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     const nuevoUsuario = await crearUsuario(
       email,
       hashedPassword,

@@ -1,5 +1,4 @@
 import { pool } from "../db/db.js";
-console.log(pool);
 
 // Función para crear un nuevo usuario
 export const crearUsuario = async (email, password, nombre, apellidos, rut) => {

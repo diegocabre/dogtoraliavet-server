@@ -4,8 +4,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Conectar a la base de datos mediante URL
-const pool = new Pool({
+export const pool = new Pool({
   connectionString: process.env.DB_DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+  logging: false,
+  native: false,
 });
 
 pool.on("connect", () => {
@@ -27,4 +32,3 @@ pool.on("error", (error) => {
   }
 })();
 
-export default pool;

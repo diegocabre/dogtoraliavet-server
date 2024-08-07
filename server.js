@@ -56,17 +56,6 @@ const verificarToken = (req, res, next) => {
   });
 };
 
-// Funciones de validación
-const validateEmail = (email) => {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(String(email).toLowerCase());
-};
-
-const validateRut = (rut) => {
-  const re = /^\d{1,2}\.\d{3}\.\d{3}-[\dKk]$/;
-  return re.test(rut);
-};
-
 // Ruta para obtener los datos del usuario autenticado
 app.get("/api/usuarios/me", verificarToken, async (req, res) => {
   try {
@@ -77,7 +66,12 @@ app.get("/api/usuarios/me", verificarToken, async (req, res) => {
     res.status(200).json(usuario);
   } catch (error) {
     console.error("Error al obtener los datos del usuario:", error);
-    res.status(500).json({ error: "Error al obtener los datos del usuario" });
+    res
+      .status(500)
+      .json({
+        error: "Error al obtener los datos del usuario",
+        detalles: error.message,
+      });
   }
 });
 

@@ -1,15 +1,18 @@
 import { pool } from "../db/db.js";
+import bcrypt from "bcrypt";
 
 // Función para crear un nuevo usuario
 export const crearUsuario = async (email, password, nombre, apellidos, rut) => {
   try {
+    // Hash de la contraseña antes de almacenarla
+    const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
       "INSERT INTO usuarios (email, password, nombre, apellidos, rut) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [email, password, nombre, apellidos, rut]
+      [email, hashedPassword, nombre, apellidos, rut]
     );
     return result.rows[0];
   } catch (error) {
-    console.error("Error al crear el usuario:", error);
+    console.error("Error al crear el usuario:", error.message);
     throw error;
   }
 };
@@ -20,7 +23,7 @@ export const obtenerUsuarios = async () => {
     const result = await pool.query("SELECT * FROM usuarios");
     return result.rows;
   } catch (error) {
-    console.error("Error al obtener los usuarios:", error);
+    console.error("Error al obtener los usuarios:", error.message);
     throw error;
   }
 };
@@ -33,7 +36,7 @@ export const obtenerUsuarioPorId = async (id) => {
     ]);
     return result.rows[0];
   } catch (error) {
-    console.error("Error al obtener el usuario:", error);
+    console.error("Error al obtener el usuario:", error.message);
     throw error;
   }
 };
@@ -47,7 +50,7 @@ export const crearMascota = async (nombre, años, raza, tipo) => {
     );
     return result.rows[0];
   } catch (error) {
-    console.error("Error al crear la mascota:", error);
+    console.error("Error al crear la mascota:", error.message);
     throw error;
   }
 };
@@ -58,7 +61,7 @@ export const obtenerMascotas = async () => {
     const result = await pool.query("SELECT * FROM mascotas");
     return result.rows;
   } catch (error) {
-    console.error("Error al obtener las mascotas:", error);
+    console.error("Error al obtener las mascotas:", error.message);
     throw error;
   }
 };
@@ -71,7 +74,7 @@ export const obtenerMascotaPorId = async (id) => {
     ]);
     return result.rows[0];
   } catch (error) {
-    console.error("Error al obtener la mascota:", error);
+    console.error("Error al obtener la mascota:", error.message);
     throw error;
   }
 };
@@ -91,7 +94,7 @@ export const crearProducto = async (
     );
     return result.rows[0];
   } catch (error) {
-    console.error("Error al crear el producto:", error);
+    console.error("Error al crear el producto:", error.message);
     throw error;
   }
 };
@@ -102,7 +105,7 @@ export const obtenerProductos = async () => {
     const result = await pool.query("SELECT * FROM productos");
     return result.rows;
   } catch (error) {
-    console.error("Error al obtener los productos:", error);
+    console.error("Error al obtener los productos:", error.message);
     throw error;
   }
 };
@@ -115,7 +118,7 @@ export const obtenerProductoPorId = async (id) => {
     ]);
     return result.rows[0];
   } catch (error) {
-    console.error("Error al obtener el producto:", error);
+    console.error("Error al obtener el producto:", error.message);
     throw error;
   }
 };
@@ -129,7 +132,7 @@ export const crearCompra = async (usuario_id, total) => {
     );
     return result.rows[0];
   } catch (error) {
-    console.error("Error al crear la compra:", error);
+    console.error("Error al crear la compra:", error.message);
     throw error;
   }
 };
@@ -140,7 +143,7 @@ export const obtenerCompras = async () => {
     const result = await pool.query("SELECT * FROM compras");
     return result.rows;
   } catch (error) {
-    console.error("Error al obtener las compras:", error);
+    console.error("Error al obtener las compras:", error.message);
     throw error;
   }
 };
@@ -153,7 +156,7 @@ export const obtenerCompraPorId = async (id) => {
     ]);
     return result.rows[0];
   } catch (error) {
-    console.error("Error al obtener la compra:", error);
+    console.error("Error al obtener la compra:", error.message);
     throw error;
   }
 };
@@ -167,7 +170,7 @@ export const obtenerDetallesCompra = async (id) => {
     );
     return result.rows;
   } catch (error) {
-    console.error("Error al obtener los detalles de la compra:", error);
+    console.error("Error al obtener los detalles de la compra:", error.message);
     throw error;
   }
 };
@@ -181,7 +184,7 @@ export const crearContacto = async (nombre, email, mensaje) => {
     );
     return result.rows[0];
   } catch (error) {
-    console.error("Error al crear el contacto:", error);
+    console.error("Error al crear el contacto:", error.message);
     throw error;
   }
 };
@@ -192,7 +195,7 @@ export const obtenerContactos = async () => {
     const result = await pool.query("SELECT * FROM contacto");
     return result.rows;
   } catch (error) {
-    console.error("Error al obtener los contactos:", error);
+    console.error("Error al obtener los contactos:", error.message);
     throw error;
   }
 };
@@ -205,7 +208,7 @@ export const obtenerContactoPorId = async (id) => {
     ]);
     return result.rows[0];
   } catch (error) {
-    console.error("Error al obtener el contacto:", error);
+    console.error("Error al obtener el contacto:", error.message);
     throw error;
   }
 };

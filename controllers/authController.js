@@ -50,8 +50,8 @@ export const login = async (req, res) => {
 export const deleteUser = async (req, res) => {
   const { email } = req.params;
   try {
-    const result = await userModel.delete(email);
-    if (result.rowCount === 0) {
+    const rowCount = await userModel.deleteUser(email);
+    if (rowCount === 0) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
     res.status(200).json({ message: "Usuario eliminado exitosamente" });

@@ -4,7 +4,7 @@ const findOne = async (email) => {
   try {
     const query = "SELECT * FROM usuarios WHERE email = $1";
     const { rows } = await pool.query(query, [email]);
-    return rows[0];  // Retorna el primer usuario encontrado
+    return rows[0]; // Retorna el primer usuario encontrado
   } catch (error) {
     console.error("Error fetching user:", error);
     throw error;
@@ -15,7 +15,7 @@ const findByRut = async (rut) => {
   try {
     const query = "SELECT * FROM usuarios WHERE rut = $1";
     const { rows } = await pool.query(query, [rut]);
-    return rows[0];  // Retorna el primer usuario encontrado
+    return rows[0]; // Retorna el primer usuario encontrado
   } catch (error) {
     console.error("Error fetching user by RUT:", error);
     throw error;
@@ -33,7 +33,7 @@ const create = async (email, password, nombre, apellidos, rut) => {
       apellidos,
       rut,
     ]);
-    return rows[0];  // Retorna el usuario creado
+    return rows[0]; // Retorna el usuario creado
   } catch (error) {
     console.error("Error creating user:", error);
     throw error;
@@ -44,7 +44,7 @@ const deleteUser = async (email) => {
   try {
     const query = "DELETE FROM usuarios WHERE email = $1";
     const result = await pool.query(query, [email]);
-    return result.rowCount;  // Retorna el número de filas afectadas
+    return result.rowCount; // Retorna el número de filas afectadas
   } catch (error) {
     console.error("Error deleting user:", error);
     throw error;

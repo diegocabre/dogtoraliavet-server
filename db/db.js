@@ -5,12 +5,17 @@ dotenv.config();
 
 // Conectar a la base de datos mediante URL
 export const pool = new Pool({
-  connectionString: process.env.DB_DATABASE_URL,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+  /*   connectionString: process.env.DB_DATABASE_URL,
   ssl: {
     rejectUnauthorized: false,
   },
   logging: false,
-  native: false,
+  native: false, */
 });
 
 pool.on("connect", () => {
@@ -31,4 +36,3 @@ pool.on("error", (error) => {
     console.error("Failed to connect to the database:", err);
   }
 })();
-

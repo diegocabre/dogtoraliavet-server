@@ -6,6 +6,12 @@ import { userModel } from "../models/user.model.js";
 
 export const register = async (req, res) => {
   const { email, password, rut, nombre, apellidos } = req.body;
+  if (!email || !password || !rut || !nombre || !apellidos) {
+    return res
+      .status(400)
+      .json({ message: "Todos los campos son obligatorios" });
+  }
+
   try {
     // Verificar si el email ya existe
     const existingUserByEmail = await userModel.findOne(email);
@@ -31,6 +37,12 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ message: "Email y contraseña son obligatorios" });
+  }
+
   try {
     const user = await userModel.findOne(email);
     if (user && (await bcrypt.compare(password, user.password))) {
@@ -49,6 +61,10 @@ export const login = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   const { email } = req.params;
+  if (!email) {
+    return res.status(400).json({ message: "El email es obligatorio" });
+  }
+
   try {
     const rowCount = await userModel.deleteUser(email);
     if (rowCount === 0) {
